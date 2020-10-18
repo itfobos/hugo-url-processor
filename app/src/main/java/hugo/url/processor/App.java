@@ -3,12 +3,41 @@
  */
 package hugo.url.processor;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.Arrays;
+import java.util.stream.Stream;
+
 public class App {
     public String getGreeting() {
         return "Hello World!";
     }
 
     public static void main(String[] args) {
-        System.out.println(new App().getGreeting());
+        String pathToProcess = args[0];
+        File srcDir = new File(pathToProcess);
+
+        if (!srcDir.exists()) {
+            System.err.println("Path " + pathToProcess + " not exist.");
+            return;
+        }
+        if (!srcDir.isDirectory()) {
+            System.err.println("Path " + pathToProcess + " is not a directory.");
+            return;
+        }
+
+        System.out.println(Arrays.toString(srcDir.list()));
+
+        try (Stream<Path> pathsStream = Files.walk(srcDir.toPath())) {
+            pathsStream
+                    .filter(Files::isRegularFile)
+                    .filter(p -> p.toString().endsWith(".md"))
+                    .forEach(System.out::println);
+            //TODO: Process each file
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }
