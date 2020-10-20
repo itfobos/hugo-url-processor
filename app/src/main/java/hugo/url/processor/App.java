@@ -7,7 +7,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Arrays;
+import java.util.Objects;
 import java.util.stream.Stream;
 
 public class App {
@@ -16,6 +16,11 @@ public class App {
     }
 
     public static void main(String[] args) {
+        if (args.length != 1) {
+            System.err.println("Illegal CL arguments. Should be just path to dir.");
+            return;
+        }
+
         String pathToProcess = args[0];
         File srcDir = new File(pathToProcess);
 
@@ -28,14 +33,16 @@ public class App {
             return;
         }
 
-        System.out.println(Arrays.toString(srcDir.list()));
+        System.out.println("Directory content is:\n" +
+                String.join("\n", Objects.requireNonNull(srcDir.list()))
+                + "\n ----------------------------------------");
 
         try (Stream<Path> pathsStream = Files.walk(srcDir.toPath())) {
             pathsStream
                     .filter(Files::isRegularFile)
                     .filter(p -> p.toString().endsWith(".md"))
-                    .forEach(System.out::println);
-            //TODO: Process each file
+                    .map(HugoMarkdownFile::new)
+                    .forEach(HugoMarkdownFile::replaceUrlToSlugAndSave);
         } catch (IOException e) {
             e.printStackTrace();
         }
