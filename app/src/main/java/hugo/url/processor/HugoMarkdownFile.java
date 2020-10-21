@@ -63,13 +63,4 @@ public class HugoMarkdownFile {
     public String toString() {
         return "HugoMarkdownFile{" + "filePath=" + filePath + '}';
     }
-
-/*
-    TODO: Process aliases.
-    They can be not only single line:
-    aliases: [solutions/isee-youth.html,/solutions/isee-youth,
-        solutions/isee-foster-care.html,/solutions/isee-foster-care,
-        solutions/isee-benefits.html,/solutions/isee-benefits,
-        solutions/isee-head-start.html,/solutions/isee-head-start]
-    */
 }
